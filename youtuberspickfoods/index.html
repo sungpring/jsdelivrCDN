@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" type="image/png" th:href="@{/header/favicon.png}">
+<!-- 검색 크롤러를 robots 하면 모든 검색엔진 허용. index:페이지 검색결과에 노출, follow 페이지를 포함한 링크된 페이지 검색결과 노출 -->
+<!-- max-image-preview:large, max-snippet:-1, max-video-preview:-1 : Yoast SEO -->
+
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="keywords" th:content="@{|${keyword}|}">
+<meta name= "description" th:content="@{|${description}|}"/>
+<meta name="author" th:content="@{|${email}|}"/>
+<meta name="rating" content="General"/>
+<meta content="all" name="Googlebot-Image"/>
+<meta content="all" name="Slurp"/>
+<meta content="all" name="Scooter"/>
+<meta content="ALL" name="WEBCRAWLERS"/>
+<meta name="revisit-after" CONTENT="2 days"/>
+<meta name="robots" content=" ALL, index, follow"/>
+
+
+<title th:text="@{|${name}|}"></title>
+
+<link rel="canonical" th:href="@{|${url}|}"> <!-- canonical 설정하면 대표페이지를 설정. -->
+<link rel="alternate" hreflang="ko" th:href="@{|${url}|}" /> <!-- link rel="alternate" 로 설정하면 다국어 페이지 설정가능 -->
+<link rel="alternate" hreflang="en" th:href="@{|${url}|}" />
+
+<meta property="og:title" th:content="@{|${name}|}"> <!-- 대표 타이틀 -->
+<meta property="og:type" content="website"> <!-- 타입은 website -->
+<meta property="og:image" th:content="@{|${url}/header/meta_property_image.png|}"><!--meta 이미지 설정-->
+<meta property="og:url" th:content="@{|${url}|}"> <!--대표 url-->
+<meta property="og:description" th:content="@{|${description}|}"> <!--사이트 설명-->
+<meta property="og:site_name" th:content="@{|${name}|}"> <!--사이트 이름-->
+<meta property="og:locale" content="ko_KR"> <!-- 언어 지역 : 여러개 가능-->
+<meta property="og:locale" content="en_US">
+
+<!-- 트위터 -->
+<meta name="twitter:card" content="summary_large_image"> <!--To get started with implementing Cards markup. 트위터를 통한-->
+<meta name="twitter:title" th:content="@{|${name}|}">
+<meta name="twitter:description" th:content="@{|${description}|}">
+<meta name="twitter:image" th:content="@{|${url}/header/meta_property_image.png|}">
+<meta name="twitter:domain" th:content="@{|${url}|}"> <!--사이트명-->
+
+<!-- 구조화 된 SEO application/ld+json -->
+<script type="application/ld+json"> 
+{"@context":"https://schema.org"
+,"@graph":[
+	{"@type":"WebSite"
+	,"@id":"[[${url}]]"
+	,"url":"[[${url}]]"
+	,"name":"[[${name}]]"
+	,"description":"[[${description}]]"
+	,"inLanguage":"en-US"}
+	
+	,{"@type":"WebPage"
+	,"@id":"[[${url}]]"
+	,"url":"[[${url}]]"
+	,"name":"[[${name}]]"
+	//A combination of date and time of day in the form [-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] (see Chapter 5.4 of ISO 8601).
+	//,"datePublished":"2012-03-02T01:30:02+00:00" T뒤에는 hh:mm:ss 이다.
+	//,"dateModified":"2019-02-20T01:44:21+00:00"
+	,"breadcrumb":{"@id":"[[${url}]]"}
+	,"inLanguage":"en-US"
+	,"potentialAction":[
+		{"@type":"ViewAction"
+		,"target":["[[${url}]]"]
+		}
+	]}
+	
+	,{"@type":"BreadcrumbList"
+	,"@id":"[[${url}]]"
+	,"itemListElement":[
+		{"@type":"ListItem"
+		,"position":1
+		,"name": "Index"
+		,"item":
+			{"@type":"WebPage"
+			,"@id":"[[${url}]]"
+			,"url":"[[${url}]]"
+			,"name":"Index"}
+		}]
+	}
+	
+]}
+</script>
+<!-- RSS -->
+<link rel="alternate" type="application/rss+xml" th:title="@{|${name}|}" th:href="@{|${url}/rss.xml|}">
+<!--https://www.xml-sitemaps.com/-->
+<link rel="alternate" type="application/rss+xml" th:title="@{|${description}|}" href="/feed">
+
+<!-- Reset CSS -->
+<link rel="stylesheet" th:href="@{/css/reset.css}" type="text/css" media="all"/> <!-- 폰트 포함 media="print" onload="this.media='all'" -->
+<!-- Main CSS -->
+<link rel="stylesheet" th:href="@{/css/main.css}" type="text/css" media="all"/> 
+
+<!-- JQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!--Naver Map Api-->
+<!--<script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=?"></script>-->
+<!--Kakao Map Api-->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=19be00b3e6a0a21152d8d67f138d5e10&libraries=clusterer"></script>
+
+<style>
+
+</style>
+</head>
+<body>
+	<div id="wrap">
+		<header class="header">
+			<div class="header_margin">
+				<div class="logo">
+					<a th:href="@{|${url}|}">
+						<img th:src="@{/header/logo2.svg}" alt="Logo">
+						<h1 th:text="${name}"></h1>
+					</a>
+				</div>
+				<div class="header_toggle">
+					<div class="menu__item--hamburger">
+						<div class="line"></div>
+						<div class="line"></div>
+						<div class="line"></div>
+					</div>
+				</div>
+				<div class="header_bar">
+					<div class="header_bar_margin">
+					</div>
+				</div>
+			</div>
+		</header>
+		<section class="map">
+			<div id="map" style=""></div>
+			<!--<iframe src="https://www.youtube.com/embed/d49N_tCbjYs" name="iframe2" title="구름이의 클라우드" width="400px" height="300px"></iframe>-->
+		</section>
+		<section class="info">
+			<div class="info_button">
+				<img src="../info/info_button/arrow.png" alt="info button">
+				<span>MORE LIST PLEASE</span>
+			</div>
+			<div class="info_list">
+				<div class="info_list_margin">
+					<ul class="info_list_channel">
+						<!-- channel li tag -->
+					</ul>
+					<ul class="info_list_marker">
+						<!--info li tag -->
+					</ul>
+				</div>
+			</div>
+		</section>
+		<footer class="footer">
+			<div class="footer_margin">
+				<div class="footer_text">
+					<p>Copyright 2022 youtuberspickfoods,Ltd. All rights reserved.</p>
+    				<address> Contact sungpring<img src="../footer/at.png" alt="at">naver.com </address>
+				</div>
+			</div>
+		</footer>
+	</div>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-V1HN91E7YD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-V1HN91E7YD');
+</script>
+<script th:inline="javascript" defer>
+/*<![CDATA[*/
+
+let container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+let options = { //지도를 생성할 때 필요한 기본 옵션
+	center: new kakao.maps.LatLng(37.5666805, 126.9784147), //지도의 중심좌표. 서울시청
+	level: 9 //지도의 레벨(확대, 축소 정도) ,
+};
+
+let map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+map.setMaxLevel(12); //맵 확대범위 제한
+map.panBy(100, 50); //맵 중심으로 부드럽게 움직이기
+/*
+let control = new kakao.maps.ZoomControl();
+map.addControl(control, kakao.maps.ControlPosition.TOPRIGHT);
+*/
+
+let homeUrl = /*[[${url}]]*/;
+/*
+let imageSrc = homeUrl+"/main/marker/marker.png", // 마커이미지의 주소입니다    
+    imageSize = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
+    imageOption = {offset: new kakao.maps.Point(27, 69), alt: "마커 이미지"}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+let markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption); // 마커 이미지 설정
+*/
+
+// 마커 클러스터러를 생성합니다 
+let clusterer = new kakao.maps.MarkerClusterer({
+/*
+	map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체 
+	averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정 
+	minLevel: 10, // 클러스터 할 최소 지도 레벨 
+	minClusterSize : 1 , // 클러스터할 최소 레코드. 디폴트는 2임
+	styles: [{
+        background: 'url(../main/cluster/cluster.png) no-repeat',
+    }]
+*/
+	map: map,
+    gridSize: 35,
+    averageCenter: true,
+    minLevel: 8,
+    minClusterSize : 1 , // 클러스터할 최소 레코드. 디폴트는 2임
+    disableClickZoom: true,
+    calculator: [10, 30, 50], //클러스터 각 구간마다 아래 스타일 배열에 적용된다.
+    styles: [{
+        width : '53px', height : '52px',
+        background: 'url(../main/cluster/cluster.png) no-repeat',
+        color: '#fff',
+        textAlign: 'center',
+        lineHeight: '54px'
+    },{
+        width : '68px', height : '67px',
+        background: 'url(../main/cluster/cluster.png) no-repeat 0 -179px',
+        color: '#fff',
+        textAlign: 'center',
+        lineHeight: '63px',
+        fontSize: '20px'
+    },{
+        width : '92px', height : '92px',
+        background: 'url(../main/cluster/cluster.png) no-repeat  0px -357px',
+        color: '#fff',
+        textAlign: 'center',
+        lineHeight: '89px',
+        fontSize: '32px'
+    }]
+});
+
+//채널, 페이징 번호, 데이터 레코드수
+var channelName = '' , pagingNum = 0 , dataLength = 0;
+
+var getMethod = async (channel,startNum) => { return new Promise(resolve => {
+  
+// 데이터를 가져오기 위해 jQuery를 사용합니다
+// 데이터를 가져와 마커를 생성하고 클러스터러 객체에 넘겨줍니다
+	
+	/* list init */
+	let info_list_marker = document.querySelector('.info_list_marker');
+	let info_list_channel = document.querySelector('.info_list_channel');
+	if(channel != '' && startNum == 0 ){
+		info_list_channel.replaceChildren();
+	}
+	/* list init End */
+	
+	$.get("/index?channelName="+channel+"&startNum="+startNum, function(data) {
+	// 데이터에서 좌표 값을 가지고 마커를 표시합니다
+	// 마커 클러스터러로 관리할 마커 객체는 생성할 때 지도 객체를 설정하지 않습니다
+	
+		/* for sql query */
+		channelName = channel;
+		pagingNum = startNum;
+		dataLength = data.length;
+		/* for sql query end */
+	
+		/* markers & channel & list init */
+		if(channel != '' && startNum == 0){ //채널 '채널명' 채워져 있는 경우와 숫자가 0일 경우 : 클러스터 초기화 & 목록 초기화
+			clusterer.clear();
+			info_list_marker.replaceChildren();
+		}else if(channel == ''){ //채널 '' 빈칸일 경우 : 클러스터 초기화 & 목록 초기화 & 채널 초기화
+			clusterer.clear();
+			info_list_marker.replaceChildren();
+			info_list_channel.replaceChildren();
+		}else if(channel != '' && startNum != 0){ // 채널 '채널명' 채워져 있는 경우와 숫자가 0이 아닐 경우 : 채널 초기화
+			info_list_channel.replaceChildren();
+		}
+		/* markers & channel & list init End */
+		
+		let markers = $(data).map(function(i) {
+		
+			/*
+			channelList[data[i].channelTitle] = "";
+			return new kakao.maps.Marker({
+				title : data[i].channelTitle ,
+				position : new kakao.maps.LatLng(data[i].x, data[i].y),
+				image: markerImage // 마커 이미지 적용
+			});
+			*/
+			
+			let content = '<div class="markeroverlay">' +
+			    '  <a href="'+data[i].videoUrl+'" target="_blank">' +
+			    '    <span class="title">'+
+						(data[i].restaurantName !="" ? data[i].restaurantName : data[i].title.substr(0, 15) + '...')  
+			    	+'</span>' +
+			    '  </a>' +
+			    '</div>';
+			
+			return new kakao.maps.CustomOverlay({
+			    map: map,
+			    position: new kakao.maps.LatLng(data[i].x, data[i].y),
+			    content: content,
+			    yAnchor: 1 
+			});
+		});
+	
+		// 클러스터러에 마커들을 추가합니다
+		clusterer.addMarkers(markers);
+		
+		
+	}).done(function(data){
+		let list_info_text = '';
+		let channel_set = {};
+		
+		$(data).map(function(i) {
+			let list_text = '<li>'+
+								'<div class="info_list_marker_wrap">'+
+									'<div class="info_list_marker_thumb">'+
+										'<a target="_blank" href="'+data[i].videoUrl+'"><img src="'+data[i].thumbnailsUrl+'" alt="youtube thumbnails image"/></a>'+
+									'</div>'+
+									'<div class="info_list_marker_table">'+
+										'<table>'+
+											'<thead>'+
+												'<tr>'+
+													'<th colspan="2">'+ ((data[i].title.length > 20) ? (data[i].title.substring(0,21)+'...') : (data[i].title)) +'</th>'+
+												'</tr>'+
+											'</thead>'+
+											'<tbody>'+
+												'<tr>'+
+													'<td><img src="../info/info_list/calendar.png"></img><span>'+ data[i].publishedAt +'</span></td>'+
+													'<td>'+ data[i].tag +'</td>'+
+												'</tr>'+
+												'<tr>'+
+													'<td colspan="2"><img src="../info/info_list/pin.png"></img><span>'+ data[i].address +'</span></td>'+
+												'</tr>'+
+												'<tr>'+
+													'<td><img src="../info/info_list/positive_vote.png"></img><span>좋아요 : '+ data[i].likeCount +'</span></td>'+
+													'<td><img src="../info/info_list/shared_vision.png"></img><span>조회수 : '+ data[i].viewCount +'</span></td>'+
+												'</tr>'+
+												'<tr>'+
+													'<td colspan="2">'+ data[i].restaurantName +'</td>'+
+												'</tr>'+
+											'</tbody>'+
+											'<tfoot>'+
+												'<tr>'+
+													'<td colspan="2">'+ data[i].channelName +'</td>'+
+												'</tr>'+
+											'</tfoot>'+
+										'</table>'+
+									'</div>'+
+								'</div>'+
+							'</li>';
+			list_info_text += list_text;
+			channel_set[data[i].channelName] = [data[i].channelTitle, data[i].channelThumbnailsUrl];
+		});
+		info_list_marker.insertAdjacentHTML('beforeend', list_info_text);
+		
+		/* channel list */
+		let channel_list_text = '<li>'+
+							  		'<img id="" class="channel_img" title="all_channel" src="../info/info_list/all.png" alt="youtube channel image" onclick="getMethod(\'\',0)">'+
+								'</li>';
+		for(key in channel_set) {
+   			let channel_text ='<li>'+
+							  	'<img id="'+key+'" class="channel_img" title="'+channel_set[key][0]+'" src="'+channel_set[key][1]+'" alt="youtube channel image" onclick="getMethod(\''+key+'\',0)">'+
+								'</li>';
+			channel_list_text += channel_text;
+		}
+		info_list_channel.insertAdjacentHTML('beforeend', channel_list_text);
+		/* channel list End */
+		
+		/* callback */
+		resolve();
+	});
+})};
+/* 색이 구려서 마커 이미지 안넣기로함
+.done(function(){
+	for(key in channelList) {
+		channelList[key] = Math.random() * (255 - 100) + 100;
+	}
+	
+	var images = document.getElementsByTagName("img");
+	$(images).map(function(i, image){
+		let title = image.getAttribute("title");
+		
+		if(Object.keys(channelList).includes(title)){
+			
+			//image.style.filter = channelList[title];
+			image.style.filter = "contrast(10%) brightness(1.25) opacity(1) drop-shadow(0 0 0 rgb("+channelList[title]+" 0 0))";
+			console.log(channelList[title]);
+		}
+	});
+});
+*/
+kakao.maps.event.addListener(map, 'click', function() {
+	let neLat = this.getBounds().getNorthEast().getLat(); //북동 위도 37.865293168746 
+	let neLng = this.getBounds().getNorthEast().getLng(); //북동 경도 127.29784194191886 
+	let swLat = this.getBounds().getSouthWest().getLat(); //남서 위도 36.77175225698579 
+	let swLng = this.getBounds().getSouthWest().getLng(); //남서 경도 126.63260496261694
+    console.log(neLat+" : "+neLng+" : "+swLat+" : "+swLng);             
+});
+
+//드래그 시 이벤트
+/*
+var constrainBounds = function() {
+    var center = map.getCenter();
+
+    var clipLat, clipLng, sw, ne;
+
+    if (!bounds.contain(center)) {
+
+        sw = bounds.getSouthWest();
+        ne = bounds.getNorthEast();
+
+        clipLat = Math.min(Math.max(sw.getLat(), center.getLat()), ne.getLat());
+        clipLng = Math.min(Math.max(sw.getLng(), center.getLng()), ne.getLng());
+
+        map.setCenter(new daum.maps.LatLng(clipLat, clipLng));
+    }
+};
+kakao.maps.event.addListener(map, 'drag', constrainBounds);
+kakao.maps.event.addListener(map, 'zoom_changed', constrainBounds);
+*/
+
+/* 쓰로틀링 설정 */
+var throttle = (callback, limit = 100) => { //쓰로틀링 : 호출 후 일정 시간 이후 작동하게끔
+    let waiting = false;
+    return function() {
+        if(!waiting) {
+            callback.apply(this, arguments);
+            waiting = true;
+            setTimeout(() => {
+                waiting = false
+            }, limit);
+        }
+    }
+}
+/* 쓰로틀링 설정 End */
+
+	
+window.onload = function() {
+	
+	/* window rezie event */
+	window.addEventListener('resize', throttle((e) => {
+		let windowWidth = window.innerWidth;
+		if (windowWidth >= 768){
+			let info_list = document.querySelector('.info_list');
+			if(info_list.style.display === 'none' && info_list.classList.contains('disappear')){
+				info_list.style.display = 'block';
+				info_list.classList.remove('disappear');
+				
+			}
+		}
+	},500));
+	/* window rezie event End */
+	
+	// 처음 모든 레코드 불러오는 펑션
+	getMethod('',0);
+	
+	/* 무한 스크롤 이벤트 */
+	document.querySelector('.info_list').addEventListener("scroll",throttle((e) => {
+    	const currentScroll = e.target.scrollTop; //현재 스크롤 위치
+	    const windowHeight = e.target.clientHeight; // 창의 크기
+	    const bodyHeight = e.target.scrollHeight; // 숨겨진 영역 모두 포함한 크기
+	    const paddingBottom = 500;
+	    
+	    if(currentScroll + windowHeight + paddingBottom >= bodyHeight){
+	    	if(channelName != '' && dataLength === 10) {
+	    		pagingNum += 10;
+	    		getMethod(channelName,pagingNum);
+	    	}
+	    }
+	},500));
+	/* 무한 스크롤 이벤트 End */
+	
+	/* 목록 클릭 이벤트 */
+	let info = document.querySelector('.info');
+	let list_button = document.querySelector('.info_button');
+	let info_list = document.querySelector('.info_list');
+	let img = list_button.children[0];
+	let span = list_button.children[1];
+	
+	list_button.addEventListener('click', function(e){
+	
+		if(info_list.style.display === "block") {
+			info_list.classList.add('disappear');
+			info_list.classList.remove('appear');
+			list_button.innerHTML = '';
+			img.style.transform = 'rotate(0deg)';
+			list_button.appendChild(img);
+			list_button.appendChild(span);
+			info_list.style.display = "none";
+		}else{
+			info_list.classList.add('appear');
+			info_list.classList.remove('disappear');
+			let span = document.createElement("span");
+			list_button.innerHTML = '';
+			list_button.append('HIDDEN LIST',span);
+			img.style.transform = 'rotate(180deg)';
+			list_button.appendChild(img);
+			info_list.style.display = "block";
+		}
+		
+	}, false);
+	/* 목록 클릭 이벤트 End */
+	
+	/* 헤더 클릭 이벤트 */
+	let header_button = document.querySelector('.header_toggle');
+	let header_bar = document.querySelector('.header_bar');
+	let map_element = document.querySelector('.map');
+	let info_element = document.querySelector('.info');
+	
+	header_button.addEventListener('click', function(e){
+		if(header_bar.style.display === "block"){
+			header_bar.classList.add('disappear');
+			header_bar.classList.remove('appear');
+			header_bar.style.display = "none";
+			map_element.style.webkitFilter = 'none';
+			info_element.style.webkitFilter = 'none';
+		}else{
+			header_bar.classList.add('appear');
+			header_bar.classList.remove('disappear');
+			header_bar.style.display = "block";
+			map_element.style.webkitFilter = 'brightness(50%)';
+			info_element.style.webkitFilter = 'brightness(50%)';
+		}
+	});
+	map_element.addEventListener('click', function(e){
+		if(map_element.style.webkitFilter === 'brightness(50%)'){
+			header_bar.style.display = "none";
+			map_element.style.webkitFilter = 'none';
+			info_element.style.webkitFilter = 'none';
+		}
+	});
+	/* 헤더 클릭 이벤트 End */
+	
+	/* 채널 드래그 스크롤 이벤트
+	const list = document.querySelector('.info_list_channel');
+	const listScrollWidth = list.scrollWidth;
+	const listClientWidth = list.clientWidth;
+	
+	let startX , nowX , endX , listX = 0;
+	
+	const getClientX = (e) => {
+  		const isTouches = e.touches ? true : false;
+  		return isTouches ? e.touches[0].clientX : e.clientX;
+	};
+
+	const getTranslateX = () => {
+  		return parseInt(getComputedStyle(list).transform.split(/[^\-0-9]+/g)[5]);
+	};
+
+	const setTranslateX = (x) => {
+  		list.style.transform = `translateX(${x}px)`;
+	};
+	
+	const onScrollStart = (e) => {
+	  	startX = getClientX(e);
+	  	window.addEventListener('mousemove', onScrollMove);
+	  	window.addEventListener('touchmove', onScrollMove);
+	  	window.addEventListener('mouseup', onScrollEnd);
+	  	window.addEventListener('touchend', onScrollEnd);
+	};
+	
+	const onClick = (e) => {
+		if (startX - endX !== 0) {
+			e.preventDefault();
+		}
+	};
+	
+	const bindEvents = () => {
+	  	list.addEventListener('mousedown', onScrollStart);
+	  	list.addEventListener('touchstart', onScrollStart);
+	  	list.addEventListener('click', onClick);
+	};
+	bindEvents();
+	
+	const onScrollMove = (e) => {
+  		nowX = getClientX(e);
+  		setTranslateX(listX + nowX - startX);
+	};
+	
+	const onScrollEnd = (e) => {
+		endX = getClientX(e);
+		listX = getTranslateX();
+		if (listX > 0) {
+			setTranslateX(0);
+			list.style.transition = `all 0.3s ease`;
+			listX = 0;
+		} else if (listX < listClientWidth - listScrollWidth) {
+			setTranslateX(listClientWidth - listScrollWidth);
+			list.style.transition = `all 0.3s ease`;
+			listX = listClientWidth - listScrollWidth;
+		}
+	
+		window.removeEventListener('mousedown', onScrollStart);
+		window.removeEventListener('touchstart', onScrollStart);
+		window.removeEventListener('mousemove', onScrollMove);
+		window.removeEventListener('touchmove', onScrollMove);
+		window.removeEventListener('mouseup', onScrollEnd);
+		window.removeEventListener('touchend', onScrollEnd);
+		window.removeEventListener('click', onClick);
+	
+		setTimeout(() => {
+			bindEvents();
+			list.style.transition = '';
+		}, 300);
+	};
+	채널 드래그 스크롤 이벤트 End */
+
+}
+
+
+
+ /*]]>*/
+</script>
+</body>
+</html>
