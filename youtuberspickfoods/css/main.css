@@ -2,14 +2,10 @@
 /* z-index */
 /* basic animation */
 .appear {
-  animation: fade-in 1s;
-  animation-fill-mode: forwards;
   display: flex;
 }
 
 .disappear {
-  animation: fade-out 1s;
-  animation-fill-mode: forwards;
   pointer-events: none;
 }
 
@@ -172,7 +168,7 @@
   top: 10%;
   right: 5%;
 }
-.map #map { 
+.map #map {
   height: 100vh;
   filter: contrast(140%);
   font-family: "Nanum Gothic", sans-serif;
@@ -371,6 +367,36 @@
   height: 40px;
   border-radius: 20px;
   cursor: pointer;
+}
+.info .info_list .info_list_margin .info_list_search {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-top: 10px;
+  height: 25px;
+}
+.info .info_list .info_list_margin .info_list_search li {
+  height: 25px;
+}
+.info .info_list .info_list_margin .info_list_search li .title_select {
+  height: 100%;
+  border-radius: 5px;
+  margin-top: 1px;
+  margin-left: 5px;
+}
+.info .info_list .info_list_margin .info_list_search li .title_search {
+  height: 100%;
+  border-radius: 5px;
+  margin-left: 5px;
+}
+.info .info_list .info_list_margin .info_list_search li .title_search_btn {
+  height: 100%;
+  width: 50px;
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-left: 5px;
 }
 .info .info_list .info_list_margin .info_list_marker {
   padding-top: 15px;
