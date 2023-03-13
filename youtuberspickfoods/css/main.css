@@ -151,9 +151,22 @@
   top: 56px;
   background-color: #ff0000;
   width: 180px;
-  height: 100%;
+  height: calc(100% - 115px);
   border: 1px solid black;
   /*z-index: 15;*/
+}
+.header .header_margin .header_bar .header_bar_margin {
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: white;
+  font-family: "Nexa Heavy Italic";
+}
+.header .header_margin .header_bar .header_bar_margin ul li {
+  cursor: pointer;
 }
 
 /* Main */
@@ -222,7 +235,7 @@
 .marker_popup {
   display: flex;
   position: fixed;
-  z-index: 10;
+  z-index: 1050;
   width: 220px;
   /*height: 200px;*/
   top: 23%;
@@ -289,6 +302,40 @@
   background-color: #ff0000;
   color: #fff;
   border-radius: 5px;
+}
+
+.notice_popup {
+  display: flex;
+  position: fixed;
+  z-index: 1050;
+  width: 270px;
+  top: 10%;
+  border: 1px solid black;
+  border-radius: 10px;
+  text-align: left;
+  box-shadow: rgba(0, 0, 0, 0.5) 0 0 0 9999px, rgba(0, 0, 0, 0.5) 2px 2px 3px 3px;
+  font-size: 14px;
+  font-family: NanumGothic;
+  line-height: 15px;
+}
+.notice_popup .notice_popup_wrap span {
+  display: block;
+  margin: 10px 0px;
+  font-size: 16px;
+  font-weight: bold;
+}
+.notice_popup .notice_popup_wrap li p {
+  margin: 10px 0;
+}
+.notice_popup .notice_popup_wrap li p em {
+  color: #ff0000;
+  font-weight: bold;
+}
+.notice_popup .notice_popup_wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  margin-bottom: 15px;
 }
 
 /* info_tap */
@@ -372,19 +419,21 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  padding-top: 10px;
-  height: 25px;
+  height: 100%;
 }
 .info .info_list .info_list_margin .info_list_search li {
   height: 25px;
+  padding-top: 10px;
 }
 .info .info_list .info_list_margin .info_list_search li .title_select {
+  width: 80px;
   height: 100%;
   border-radius: 5px;
   margin-top: 1px;
   margin-left: 5px;
 }
 .info .info_list .info_list_margin .info_list_search li .title_search {
+  width: 130px;
   height: 100%;
   border-radius: 5px;
   margin-left: 5px;
